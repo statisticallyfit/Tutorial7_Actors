@@ -29,7 +29,12 @@ class Terrible extends Actor {
   }
 
   def receive = Exercise.log("Terrible") andThen {
-    case NextPlayerIs(p) => nextPlayer = Some(p)
+    case NextPlayerIs(p) => {
+      nextPlayer = Some(p)
+
+      // Let's send a message back so there is some kind of response, so the set-up code can know we've done it.
+      sender ! "Ok"
+    }
     case i:Int => respond(i)
     case Fizz(i) => respond(i)
     case Buzz(i) => respond(i)
