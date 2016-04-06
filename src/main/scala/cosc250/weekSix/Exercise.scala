@@ -73,10 +73,43 @@ object Exercise {
       } else nextNum
     }
 
+    /**
+      * This should check the veracity of a FizzBuzz message.
+      * (Including checking whether a Fizz should really have been a FizzBuzz!)
+      */
+    def checkMessage(m:Any):Boolean = m match {
+      case 0 => true
+      case FizzBuzz(i) => i % 3 == 0 && i % 5 == 0
+      case Fizz(i) => i % 3 == 0 && i % 5 != 0
+      case Buzz(i) => i % 3 != 0 && i % 5 == 0
+      case i:Int => i % 3 != 0 && i % 5 != 0
+      case _ => false
+    }
+
     def respond(i:Int) = {
       val n = nextResponse(i)
       println("FBA says " + n)
       for { p <- nextPlayer } p ! n
+    }
+
+    /**
+      * We want to check the message, and that means we need a reference to it.
+      * So I've broken this out as its own function, taking the message m as a parameter
+      */
+    def checkAndRespond(m:Any) = {
+      if (checkMessage(m)) {
+        // If the message is good, then we keep going as before
+        m match {
+          case i:Int => respond(i)
+          case Fizz(i) => respond(i)
+          case Buzz(i) => respond(i)
+          case FizzBuzz(i) => respond(i)
+        }
+      } else {
+        // But if the message was wrong, we send "Wrong" to the sender
+        // sender is a message defined on ActorRef that gets the sender of the message we're dealing with.
+        sender ! Wrong(m)
+      }
     }
 
     def receive = Exercise.log("FBA") andThen {
@@ -86,11 +119,14 @@ object Exercise {
         // Let's send a message back so there is some kind of response, so the set-up code can know we've done it.
         sender ! "Ok"
       }
-      case i:Int => respond(i)
-      case Fizz(i) => respond(i)
-      case Buzz(i) => respond(i)
-      case FizzBuzz(i) => respond(i)
-    }  }
+
+      // We need to handle the Wrong message
+      case Wrong(x) => println("Someone just said I got it wrong.")
+
+      // I've broken this code out into the checkAndRespond method
+      case m => checkAndRespond(m)
+    }
+  }
 
 
 }

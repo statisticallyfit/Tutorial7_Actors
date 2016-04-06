@@ -1,7 +1,7 @@
 package cosc250.weekSix
 
 import akka.actor.{ActorRef, Actor}
-import cosc250.weekSix.Exercise.{NextPlayerIs, Buzz, FizzBuzz, Fizz}
+import cosc250.weekSix.Exercise._
 
 import scala.util.Random
 
@@ -39,6 +39,9 @@ class Terrible extends Actor {
     case Fizz(i) => respond(i)
     case Buzz(i) => respond(i)
     case FizzBuzz(i) => respond(i)
+
+    // Terrible also needs to handle the Wrong message
+    case Wrong(x) => println("Someone just said I got it wrong.")
   }
 
 }
