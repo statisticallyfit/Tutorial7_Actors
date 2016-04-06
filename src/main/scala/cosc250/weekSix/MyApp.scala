@@ -20,19 +20,27 @@ object MyApp extends App {
   // Create the actor system
   val system = ActorSystem("PingPongSystem")
 
-  // Create three of your players
-  val algernon = system.actorOf(Props[FizzBuzzActor], name = "Algernon")
-  val bertie = system.actorOf(Props[FizzBuzzActor], name = "Bertie")
-  val cecily = system.actorOf(Props[FizzBuzzActor], name = "Cecily")
+  // Let's create five Terrible players.
+  // Each of these returns an ActorRef
+  val algernon = system.actorOf(Props[Terrible], name = "Algernon")
+  val bertie = system.actorOf(Props[Terrible], name = "Bertie")
+  val cecily = system.actorOf(Props[Terrible], name = "Cecily")
+  val daliah = system.actorOf(Props[Terrible], name = "Dahlia")
+  val earnest = system.actorOf(Props[Terrible], name = "Earnest")
 
-  // Create a terrible player
-  val hello = system.actorOf(Props[Terrible], name = "Terrible")
+  // To set the players up in a circle, we tell each player who the next one is
+  // (In the code for Terrible, there's a field that keeps who the next player is. And Terrible
+  // updates it on receiving a NextPlayerIs(player) message.  
+  algernon ! NextPlayerIs(bertie)
+  bertie ! NextPlayerIs(cecily)
+  cecily ! NextPlayerIs(daliah)
+  daliah ! NextPlayerIs(earnest)
+  earnest ! NextPlayerIs(algernon)
 
-  // Set the players up in a circle
-
-
-  // Start the game by sending the first player the number 0
-
+  // And we can start the game by sending the first player the number 0
+  // (Because if we look at the Actors, they then send the next message on for the next number in
+  // sequence)
+  algernon ! 0
 
 }
 
