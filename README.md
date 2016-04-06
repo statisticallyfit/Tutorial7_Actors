@@ -7,6 +7,11 @@ Let's put in a slightly higher level mission...
 
 2. In `MyApp`, set up a ring of `Terrible` players and start them playing. They will get it all wrong, but won't even know. But they should print it out to the console, so you'll see you have some Actors talking to each other.
 
+   Q: If you do this naively (just sending the messages) it's theoretically possible for an actor to be slow responding to the `NextPlayerIs` message, and not actually have set themselves up when the game starts.
+   How could you edit this so it's all still asynchronous, but you can *guaruntee* every player is ready before the game begins?
+
+   Hint: Terrible will need to send a message in reply to the NextPlayerIs message, and then `MyApp` might want to use `?` instead of `!` and chain some futures together...
+
 3. In `Exercise`, write a player who will play the game correctly. Don't worry yet about dealing with the Terrible players who get it wrong, just get your player to give the right next message (and print it out)
 
 4. Now get your player to think about the message its received, and to send a Wrong message back to the previous player if they gave the wrong answer.
