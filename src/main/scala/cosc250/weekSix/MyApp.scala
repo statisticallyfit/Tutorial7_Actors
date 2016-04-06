@@ -21,11 +21,11 @@ object MyApp extends App {
 
   // Let's create five Terrible players.
   // Each of these returns an ActorRef
-  val algernon = system.actorOf(Props[Terrible], name = "Algernon")
+  val algernon = system.actorOf(Props[FizzBuzzActor], name = "Algernon")
   val bertie = system.actorOf(Props[Terrible], name = "Bertie")
-  val cecily = system.actorOf(Props[Terrible], name = "Cecily")
-  val daliah = system.actorOf(Props[Terrible], name = "Dahlia")
-  val earnest = system.actorOf(Props[Terrible], name = "Earnest")
+  val cecily = system.actorOf(Props[FizzBuzzActor], name = "Cecily")
+  val daliah = system.actorOf(Props[FizzBuzzActor], name = "Dahlia")
+  val earnest = system.actorOf(Props[FizzBuzzActor], name = "Earnest")
 
   // Ok, this code I'll need to put in the README.md
   // To use the "ask" pattern, we need an implicit timeout.

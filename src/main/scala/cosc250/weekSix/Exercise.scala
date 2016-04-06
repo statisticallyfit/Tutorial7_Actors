@@ -59,23 +59,38 @@ object Exercise {
    */
   class FizzBuzzActor extends Actor {
 
-    /*
-     * In class, I hadn't shown the type of the receive method. It's a PartialFunction!
-     * (Ah, the joy of being able to link back to earlier lectures...)
-     *
-     * Curiously, this means you can also change the def to a val and it will still work.
-     * I'll leave why that is as an exercise for the reader...
-     */
-    def receive:PartialFunction[Any, Unit] = log("FBA") andThen {
+    var nextPlayer:Option[ActorRef] = None
 
-      // Now decide how your actor is going to respond to the messages. Note, you might need to
-      // Create member variables and functions...
+    def nextResponse(i:Int) = {
+      val nextNum = i + 1
 
-      // We have to have at least one case statement to make this compile as a PartialFunction
-      // with the types...
-      case _ => {}
+      if (nextNum % 3 == 0 && nextNum % 5 == 0) {
+        FizzBuzz(nextNum)
+      } else if (nextNum % 5 == 0) {
+        Buzz(nextNum)
+      } else if (nextNum % 3 == 0) {
+        Fizz(nextNum)
+      } else nextNum
     }
-  }
+
+    def respond(i:Int) = {
+      val n = nextResponse(i)
+      println("FBA says " + n)
+      for { p <- nextPlayer } p ! n
+    }
+
+    def receive = Exercise.log("FBA") andThen {
+      case NextPlayerIs(p) => {
+        nextPlayer = Some(p)
+
+        // Let's send a message back so there is some kind of response, so the set-up code can know we've done it.
+        sender ! "Ok"
+      }
+      case i:Int => respond(i)
+      case Fizz(i) => respond(i)
+      case Buzz(i) => respond(i)
+      case FizzBuzz(i) => respond(i)
+    }  }
 
 
 }
