@@ -5,8 +5,7 @@ import java.util.concurrent.TimeoutException
 import akka.actor._
 import akka.pattern.ask
 import akka.util.Timeout
-import play.api.libs.ws.ahc.AhcWSClient
-import play.api.libs.ws.ning.NingWSClient
+import play.api.libs.ws.ahc.StandaloneAhcWSClient
 
 import scala.concurrent.duration.FiniteDuration
 import akka.actor.ActorSystem
