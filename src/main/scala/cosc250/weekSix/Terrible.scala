@@ -1,7 +1,7 @@
 package cosc250.weekSix
 
-import akka.actor.{ActorRef, Actor}
-import cosc250.weekSix.Exercise.{NextPlayerIs, Buzz, FizzBuzz, Fizz}
+import akka.actor.{Actor, ActorRef}
+import cosc250.weekSix.Exercise._
 
 import scala.util.Random
 
@@ -28,12 +28,23 @@ class Terrible extends Actor {
     for { p <- nextPlayer } p ! n
   }
 
-  def receive = Exercise.log("Terrible") andThen {
-    case NextPlayerIs(p) => nextPlayer = Some(p)
+  def receive = Exercise.log(self.path.name) andThen {
+
+
+    // Note - we have to respond to this, or the starting logic will never complete
+    case RefereeIs(r) =>
+      sender() ! "ok"
+
+    // Again, we have to respond so that the ask pattern in the Referee will complete successfully
+    case NextPlayerIs(p) =>
+      nextPlayer = Some(p)
+      sender() ! "Created"
+
     case i:Int => respond(i)
     case Fizz(i) => respond(i)
     case Buzz(i) => respond(i)
     case FizzBuzz(i) => respond(i)
+    case _ => {}
   }
 
 }
