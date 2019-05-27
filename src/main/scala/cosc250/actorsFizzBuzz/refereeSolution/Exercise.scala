@@ -1,13 +1,6 @@
-package cosc250.weekSix
+package cosc250.actorsFizzBuzz.refereeSolution
 
-import akka.actor.{Actor, ActorRef, ActorSystem}
-import akka.stream.ActorMaterializer
-import play.api.libs.json
-import play.api.libs.json.{JsValue, Json}
-import play.api.libs.ws.ahc.StandaloneAhcWSClient
-
-import scala.concurrent.{Promise, Future}
-import scala.concurrent.ExecutionContext.Implicits.global
+import akka.actor.{Actor, ActorRef}
 
 /**
   * This week, let's play FizzBuzz with Actors.

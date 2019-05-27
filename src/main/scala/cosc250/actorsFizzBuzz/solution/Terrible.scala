@@ -1,7 +1,7 @@
-package cosc250.weekSix
+package cosc250.actorsFizzBuzz.solution
 
-import akka.actor.{Actor, ActorRef}
-import cosc250.weekSix.Exercise._
+import akka.actor.{ActorRef, Actor}
+import Exercise._
 
 import scala.util.Random
 
@@ -29,20 +29,19 @@ class Terrible extends Actor {
 	}
 
 	def receive = Exercise.log("Terrible") andThen {
-		// Note - we have to respond to this, or the starting logic will never complete
-		case RefereeIs(r) =>
-			sender() ! "ok"
-
-		// Again, we have to respond so that the ask pattern in the Referee will complete successfully
-		case NextPlayerIs(p) =>
+		case NextPlayerIs(p) => {
 			nextPlayer = Some(p)
-			sender() ! "Created"
 
+			// Let's send a message back so there is some kind of response, so the set-up code can know we've done it.
+			sender ! "Ok"
+		}
 		case i:Int => respond(i)
 		case Fizz(i) => respond(i)
 		case Buzz(i) => respond(i)
 		case FizzBuzz(i) => respond(i)
-		case _ => {}
+
+		// Terrible also needs to handle the Wrong message
+		case Wrong(x) => println("Someone just said I got it wrong.")
 	}
 
 }

@@ -1,13 +1,16 @@
-package cosc250.weekSix
+package cosc250.actorsFizzBuzz.refereeSolution
 
+import akka.actor.{ActorSystem, Props}
+import akka.util.Timeout
+import akka.pattern.ask
 
-import akka.actor._
+import scala.concurrent.duration._
 import akka.actor.ActorSystem
 import scala.concurrent.ExecutionContext.Implicits.global
-import akka.pattern.ask
-import akka.util.Timeout
-import scala.concurrent.duration._
 
+/**
+  *
+  */
 object MyApp extends App {
 
 	import Exercise._
@@ -57,4 +60,3 @@ object MyApp extends App {
 
 
 }
-

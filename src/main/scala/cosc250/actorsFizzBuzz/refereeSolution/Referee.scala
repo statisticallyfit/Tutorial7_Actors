@@ -1,10 +1,10 @@
-package cosc250.weekSix
+package cosc250.actorsFizzBuzz.refereeSolution
 
 import akka.actor.{Actor, ActorRef}
-import cosc250.weekSix.Exercise._
+import cosc250.actorsFizzBuzz.refereeSolution.Exercise._
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 /**
   * This Actor is shockingly awful at this game. It gets the number and increments it,
@@ -41,6 +41,7 @@ class Referee extends Actor {
 			// Let's import the ask pattern, so we can get every player to reply when they have received the NextPlayerIs message
 			import akka.pattern.ask
 			import akka.util.Timeout
+
 			import scala.concurrent.duration._
 			implicit val timeout = Timeout(5.seconds)
 
