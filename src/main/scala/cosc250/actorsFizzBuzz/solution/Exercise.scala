@@ -1,9 +1,9 @@
 package cosc250.actorsFizzBuzz.solution
 
-import akka.actor.{Actor, ActorRef, ActorSystem}
+import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem}
 import akka.stream.ActorMaterializer
 
-import scala.concurrent.{Promise, Future}
+import scala.concurrent.{Future, Promise}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
@@ -45,7 +45,7 @@ object Exercise {
 	  *
 	  * log("MyActor") andThen { case ... }
 	  */
-	def log(name:String):PartialFunction[Any, Any] = {
+	def exLog(name:String):PartialFunction[Any, Any] = {
 		case m =>
 			println(name + " received " + m)
 			m
@@ -54,11 +54,11 @@ object Exercise {
 	/*
 	 * Now you need to define your FizzBuzz Actor...
 	 */
-	class FizzBuzzActor extends Actor {
+	class FizzBuzzActor extends Actor with ActorLogging {
 
 		var nextPlayer:Option[ActorRef] = None
 
-		def nextResponse(i:Int) = {
+		def getNextResponse(i:Int) = {
 			val nextNum = i + 1
 
 			if (nextNum % 3 == 0 && nextNum % 5 == 0) {
@@ -70,33 +70,24 @@ object Exercise {
 			} else nextNum
 		}
 
-		/**
-		  * This should check the veracity of a FizzBuzz message.
-		  * (Including checking whether a Fizz should really have been a FizzBuzz!)
-		  */
-		def checkMessage(m:Any):Boolean = m match {
-			case 0 => true
-			case FizzBuzz(i) => i % 3 == 0 && i % 5 == 0
-			case Fizz(i) => i % 3 == 0 && i % 5 != 0
-			case Buzz(i) => i % 3 != 0 && i % 5 == 0
-			case i:Int => i % 3 != 0 && i % 5 != 0
-			case _ => false
-		}
 
-		def respond(i:Int) = {
-			val n = nextResponse(i)
-			println("FBA says " + n)
-			for { p <- nextPlayer } p ! n
+		def respond(i:Int): Unit = {
+			val nextResp = getNextResponse(i)
+			log.info(s"FBA says $nextResp")
+
+			for (aNextPlayer <- nextPlayer){
+				aNextPlayer ! nextResp
+			}
 		}
 
 		/**
 		  * We want to check the message, and that means we need a reference to it.
 		  * So I've broken this out as its own function, taking the message m as a parameter
 		  */
-		def checkAndRespond(m:Any) = {
-			if (checkMessage(m)) {
+		def checkAndRespond(message:Any): Unit = {
+			if (checkMessage(message)) {
 				// If the message is good, then we keep going as before
-				m match {
+				message match {
 					case i:Int => respond(i)
 					case Fizz(i) => respond(i)
 					case Buzz(i) => respond(i)
@@ -105,11 +96,26 @@ object Exercise {
 			} else {
 				// But if the message was wrong, we send "Wrong" to the sender
 				// sender is a message defined on ActorRef that gets the sender of the message we're dealing with.
-				sender ! Wrong(m)
+				sender ! Wrong(message)
 			}
 		}
 
-		def receive = Exercise.log("FBA") andThen {
+		/**
+		  * This should check the veracity of a FizzBuzz message.
+		  * (Including checking whether a Fizz should really have been a FizzBuzz!)
+		  */
+		def checkMessage(message:Any):Boolean = message match {
+			case 0 => true
+			case FizzBuzz(i) => i % 3 == 0 && i % 5 == 0
+			case Fizz(i) => i % 3 == 0 && i % 5 != 0
+			case Buzz(i) => i % 3 != 0 && i % 5 == 0
+			case i:Int => i % 3 != 0 && i % 5 != 0
+			case _ => false
+		}
+
+		//changing partial functions together: exLog now excepts to get "Message" as argument to print out when we
+		// use andThen this way.
+		def receive = Exercise.exLog("FBA") andThen {
 			case NextPlayerIs(p) => {
 				nextPlayer = Some(p)
 

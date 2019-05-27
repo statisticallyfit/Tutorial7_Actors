@@ -1,6 +1,6 @@
 package cosc250.actorsFizzBuzz.solution
 
-import akka.actor.{ActorRef, Actor}
+import akka.actor.{Actor, ActorLogging, ActorRef}
 import Exercise._
 
 import scala.util.Random
@@ -9,11 +9,11 @@ import scala.util.Random
   * This Actor is shockingly awful at this game. It gets the number and increments it,
   * but
   */
-class Terrible extends Actor {
+class Terrible extends Actor with ActorLogging {
 
 	var nextPlayer:Option[ActorRef] = None
 
-	def nextResponse(i:Int) = {
+	def getNextResponse(i:Int) = {
 		Seq(
 			i + 1,
 			Fizz(i + 1),
@@ -23,12 +23,14 @@ class Terrible extends Actor {
 	}
 
 	def respond(i:Int) = {
-		val n = nextResponse(i)
-		println("Terrible says " + n)
-		for { p <- nextPlayer } p ! n
+		val nextResp = getNextResponse(i)
+		log.info("Terrible says " + nextResp)
+
+		for { nextPly <- nextPlayer } nextPly ! nextResp
 	}
 
-	def receive = Exercise.log("Terrible") andThen {
+	//'andthen' chains partial functions together.
+	def receive = Exercise.exLog("Terrible") andThen {
 		case NextPlayerIs(p) => {
 			nextPlayer = Some(p)
 

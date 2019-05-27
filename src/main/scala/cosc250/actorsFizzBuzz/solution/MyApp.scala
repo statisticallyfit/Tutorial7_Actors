@@ -16,7 +16,6 @@ object MyApp extends App {
 	val system = ActorSystem("PingPongSystem")
 
 
-
 	// Let's create five Terrible players.
 	// Each of these returns an ActorRef
 	val algernon = system.actorOf(Props[FizzBuzzActor], name = "Algernon")
@@ -45,7 +44,7 @@ object MyApp extends App {
 	for {
 		a <- algernon ? NextPlayerIs(bertie)
 		b <- bertie ? NextPlayerIs(cecily)
-		c <-cecily ? NextPlayerIs(daliah)
+		c <- cecily ? NextPlayerIs(daliah)
 		d <- daliah ? NextPlayerIs(earnest)
 		e <- earnest ? NextPlayerIs(algernon)
 	} {
