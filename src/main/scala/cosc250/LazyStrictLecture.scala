@@ -7,23 +7,23 @@ import scala.collection.immutable
 
 object Temp {
 
-	val theval1: Int = {
-		println("I was called")
+	val theval_val: Int = {
+		println("I was called (val) ")
 		3
 	}
 
-	def theval2: Int = {
-		println("I was called")
+	def theval_def: Int = {
+		println("I was called (def)")
 		3
 	}
 
 	def main(args: Array[String]) {
 		println("test: println(theval1)")
-		println(theval1) //3
+		println(theval_val) //3
 
 		println("test: println(theval1) TWICE")
-		println(theval1) //3
-		println(theval1) //3
+		println(theval_val) //3
+		println(theval_val) //3
 
 		println("empty the val1")
 		val theval11: Int = {
@@ -35,11 +35,11 @@ object Temp {
 
 		println("-----------")
 		println("test: println(theval2)")
-		println(theval2) //I was called and 3
+		println(theval_def) //I was called and 3
 
 		println("test: println(theval2) TWICE")
-		println(theval2) // i was valled, and 3
-		println(theval2) // i was called, and 3
+		println(theval_def) // i was valled, and 3
+		println(theval_def) // i was called, and 3
 
 		println("empty theval2")
 		def theval22: Int = {
